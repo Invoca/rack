@@ -47,9 +47,33 @@ module Rack
     # Unescapes a URI escaped string with +encoding+. +encoding+ will be the
     # target encoding of the string returned, and it defaults to UTF-8
     if defined?(::Encoding)
-      def unescape(s, encoding = Encoding::UTF_8)
-        URI.decode_www_form_component(s, encoding)
+      def unescape(str, encoding = Encoding::UTF_8)
+        # Invoca Patch
+        if TBLDECWWWCOMP_.empty?
+          tbl = {}
+          256.times do |i|
+            h, l = i>>4, i&15
+            tbl['%%%X%X' % [h, l]] = i.chr
+            tbl['%%%x%X' % [h, l]] = i.chr
+            tbl['%%%X%x' % [h, l]] = i.chr
+            tbl['%%%x%x' % [h, l]] = i.chr
+          end
+          tbl['+'] = ' '
+          begin
+            TBLDECWWWCOMP_.replace(tbl)
+            TBLDECWWWCOMP_.freeze
+          rescue
+          end
+        end
+        str = str.gsub(/%(?![0-9a-fA-F]{2})/, "%25")
+        str.gsub(/\+|%[0-9a-fA-F]{2}/) {|m| TBLDECWWWCOMP_[m]}.force_encoding(encoding )
       end
+    # this is what we are over-riding in Ruby2
+    #def self.decode_www_form_component(str, enc=Encoding::UTF_8)
+    #  raise ArgumentError, "invalid %-encoding (#{str})" unless /\A[^%]*(?:%\h\h[^%]*)*\z/ =~ str
+    #  str.b.gsub(/\+|%\h\h/, TBLDECWWWCOMP_).force_encoding(enc)
+    #end
+    # End Invoca Patch
     else
       def unescape(s, encoding = nil)
         URI.decode_www_form_component(s, encoding)
