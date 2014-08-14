@@ -21,6 +21,8 @@ module Rack
   # applications adopted from all kinds of Ruby libraries.
 
   module Utils
+    TBLDECWWWCOMP_ = {}
+    
     # URI escapes. (CGI style space to +)
     def escape(s)
       URI.encode_www_form_component(s)
@@ -33,7 +35,7 @@ module Rack
       escape(s).gsub('+', '%20')
     end
     module_function :escape_path
-
+    
     # Unescapes a URI escaped string with +encoding+. +encoding+ will be the
     # target encoding of the string returned, and it defaults to UTF-8
     if defined?(::Encoding)
