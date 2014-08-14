@@ -31,6 +31,8 @@ module Rack
     # sequence.
     class InvalidParameterError < ArgumentError; end
 
+    TBLDECWWWCOMP_ = {}
+    
     # URI escapes. (CGI style space to +)
     def escape(s)
       URI.encode_www_form_component(s)
