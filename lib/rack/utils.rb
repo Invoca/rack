@@ -67,7 +67,7 @@ module Rack
           rescue
           end
         end
-        str = str.gsub(/%(?![0-9a-fA-F]{2})/, "%25")
+        str = s.gsub(/%(?![0-9a-fA-F]{2})/, "%25")
         str.gsub(/\+|%[0-9a-fA-F]{2}/) {|m| TBLDECWWWCOMP_[m]}.force_encoding(encoding )
       end
       # this is what we are over-riding in Ruby2
